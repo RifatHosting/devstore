@@ -1,0 +1,2031 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevShop Excelcior - Professional Web Store Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=General+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #030305;
+      --bg: #06080d;
+      --bg-elevated: #0c1018;
+      --bg-card: #111827;
+      --bg-card-hover: #1a2234;
+      --border: rgba(255, 255, 255, 0.06);
+      --border-active: rgba(255, 255, 255, 0.12);
+      --fg: #f8fafc;
+      --fg-secondary: #cbd5e1;
+      --fg-muted: #64748b;
+      --accent: #10b981;
+      --accent-light: #34d399;
+      --accent-dark: #059669;
+      --accent-glow: rgba(16, 185, 129, 0.15);
+      --accent-secondary: #06b6d4;
+      --danger: #f43f5e;
+      --warning: #f59e0b;
+      --purple: #a855f7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'General Sans', -apple-system, sans-serif;
+      background: var(--bg-deep);
+      color: var(--fg);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--fg-muted); border-radius: 20px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--fg-secondary); }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(-16px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-12px) rotate(1deg); }
+    }
+
+    @keyframes pulse-soft {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.05); }
+    }
+
+    @keyframes gradient-flow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    @keyframes rotate-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes morph {
+      0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+      50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+    }
+
+    .animate-fade-up { animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    .animate-fade-in { animation: fadeIn 0.5s ease forwards; }
+    .animate-scale-in { animation: scaleIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    .animate-slide-right { animation: slideRight 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    .animate-float { animation: float 6s ease-in-out infinite; }
+    .animate-morph { animation: morph 8s ease-in-out infinite; }
+
+    .stagger-1 { animation-delay: 0.05s; opacity: 0; }
+    .stagger-2 { animation-delay: 0.1s; opacity: 0; }
+    .stagger-3 { animation-delay: 0.15s; opacity: 0; }
+    .stagger-4 { animation-delay: 0.2s; opacity: 0; }
+    .stagger-5 { animation-delay: 0.25s; opacity: 0; }
+    .stagger-6 { animation-delay: 0.3s; opacity: 0; }
+
+    /* Background */
+    .bg-ambient {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .bg-gradient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.4;
+    }
+
+    .bg-grid-pattern {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+    }
+
+    .bg-noise {
+      position: absolute;
+      inset: 0;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    /* Glass Card */
+    .glass-card {
+      background: linear-gradient(135deg, rgba(17, 24, 39, 0.8) 0%, rgba(17, 24, 39, 0.4) 100%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .glass-card:hover {
+      border-color: var(--border-active);
+    }
+
+    /* Input Premium */
+    .input-premium {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 18px;
+      color: var(--fg);
+      width: 100%;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .input-premium:hover {
+      border-color: var(--border-active);
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .input-premium:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 0 4px var(--accent-glow), inset 0 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .input-premium::placeholder {
+      color: var(--fg-muted);
+    }
+
+    /* Buttons */
+    .btn-glow {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      color: #000;
+      font-weight: 600;
+      font-family: 'Outfit', sans-serif;
+      padding: 14px 28px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      letter-spacing: 0.01em;
+      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-glow::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+
+    .btn-glow::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+      border-radius: 16px;
+      z-index: -1;
+      opacity: 0;
+      filter: blur(12px);
+      transition: opacity 0.3s ease;
+    }
+
+    .btn-glow:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px rgba(16, 185, 129, 0.25);
+    }
+
+    .btn-glow:hover::before {
+      transform: translateX(100%);
+    }
+
+    .btn-glow:hover::after {
+      opacity: 0.6;
+    }
+
+    .btn-glow:active {
+      transform: translateY(0);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--fg-secondary);
+      font-weight: 500;
+      font-family: inherit;
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.25s ease;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255,255,255,0.03);
+      border-color: var(--border-active);
+      color: var(--fg);
+    }
+
+    .btn-danger {
+      background: rgba(244, 63, 94, 0.1);
+      color: var(--danger);
+      font-weight: 500;
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(244, 63, 94, 0.2);
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.25s ease;
+    }
+
+    .btn-danger:hover {
+      background: rgba(244, 63, 94, 0.2);
+      border-color: var(--danger);
+    }
+
+    /* Upload Area */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 20px;
+      padding: 40px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      background: rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-zone::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .upload-zone:hover {
+      border-color: var(--accent);
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .upload-zone:hover::before {
+      opacity: 1;
+    }
+
+    .upload-zone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-glow);
+    }
+
+    /* Phone Device */
+    .device-container {
+      position: relative;
+      perspective: 2000px;
+    }
+
+    .device-frame {
+      background: linear-gradient(145deg, #1a1a2e 0%, #0f0f1a 100%);
+      border-radius: 54px;
+      padding: 16px;
+      position: relative;
+      box-shadow: 
+        0 0 0 1px rgba(255,255,255,0.05),
+        0 2px 4px rgba(0,0,0,0.3),
+        0 8px 16px rgba(0,0,0,0.3),
+        0 24px 48px rgba(0,0,0,0.4),
+        0 48px 96px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+      transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .device-frame:hover {
+      transform: rotateY(-2deg) rotateX(2deg);
+    }
+
+    .device-frame::before {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 32px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 30;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .device-frame::after {
+      content: '';
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 5px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+    }
+
+    .device-screen {
+      background: #fff;
+      border-radius: 42px;
+      overflow: hidden;
+      height: 720px;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    .device-screen::-webkit-scrollbar { width: 0; }
+
+    .device-glow {
+      position: absolute;
+      inset: -100px;
+      background: radial-gradient(circle at 30% 30%, var(--accent-glow) 0%, transparent 50%);
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Section Header */
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 5px;
+      height: 28px;
+      background: linear-gradient(180deg, var(--accent) 0%, var(--accent-secondary) 100%);
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    /* Tab Pills */
+    .tab-pills {
+      display: flex;
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 6px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+    }
+
+    .tab-pill {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      color: var(--fg-muted);
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 12px;
+      font-size: 13px;
+      font-family: inherit;
+      transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-pill:hover {
+      color: var(--fg-secondary);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .tab-pill.active {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      color: #000;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+    }
+
+    .tab-pill .badge {
+      background: rgba(255,255,255,0.1);
+      color: inherit;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .tab-pill.active .badge {
+      background: rgba(0,0,0,0.2);
+    }
+
+    /* Toggle Switch */
+    .toggle-track {
+      width: 52px;
+      height: 28px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      background: var(--fg-muted);
+      border-radius: 50%;
+      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .toggle-track.active {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .toggle-track.active::after {
+      left: 27px;
+      background: #000;
+    }
+
+    /* Theme Selector */
+    .theme-swatch {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .theme-swatch::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: inherit;
+      filter: brightness(1.2);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .theme-swatch:hover {
+      transform: scale(1.1);
+    }
+
+    .theme-swatch:hover::before {
+      opacity: 1;
+    }
+
+    .theme-swatch.active {
+      border-color: var(--fg);
+      box-shadow: 0 0 20px rgba(255,255,255,0.15);
+    }
+
+    /* Product Card */
+    .product-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+      animation: fadeUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .product-card:hover {
+      border-color: var(--border-active);
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    /* Banner Preview */
+    .banner-card {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      aspect-ratio: 16/9;
+      group: banner;
+      animation: scaleIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .banner-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .banner-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .banner-card .actions {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.8) 100%);
+      opacity: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: 12px;
+      transition: opacity 0.3s ease;
+    }
+
+    .banner-card:hover .actions {
+      opacity: 1;
+    }
+
+    /* Progress Ring */
+    .progress-ring {
+      width: 120px;
+      height: 120px;
+      position: relative;
+    }
+
+    .progress-ring svg {
+      transform: rotate(-90deg);
+    }
+
+    .progress-ring circle {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+    }
+
+    .progress-ring .bg-ring {
+      stroke: rgba(255,255,255,0.05);
+    }
+
+    .progress-ring .fg-ring {
+      stroke: url(#progressGradient);
+      transition: stroke-dashoffset 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .progress-ring .value {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Toast */
+    .toast-wrapper {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .toast-item {
+      background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      transform: translateX(120%);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      max-width: 380px;
+    }
+
+    .toast-item.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .toast-item.success { border-left: 4px solid var(--accent); }
+    .toast-item.error { border-left: 4px solid var(--danger); }
+    .toast-item.warning { border-left: 4px solid var(--warning); }
+
+    /* Feature Row */
+    .feature-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .feature-row:last-child {
+      border-bottom: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 1280px) {
+      .device-frame { transform: scale(0.85); transform-origin: top center; }
+    }
+
+    @media (max-width: 1024px) {
+      .device-container { display: none; }
+    }
+
+    @media (max-width: 640px) {
+      .glass-card { padding: 20px; border-radius: 20px; }
+      .upload-zone { padding: 28px 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Ambient Background -->
+  <div class="bg-ambient">
+    <div class="bg-gradient-orb animate-morph" style="width: 800px; height: 800px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%); top: -20%; left: -10%; opacity: 0.15;"></div>
+    <div class="bg-gradient-orb animate-morph" style="width: 600px; height: 600px; background: linear-gradient(135deg, var(--purple) 0%, var(--accent-secondary) 100%); bottom: -10%; right: -5%; opacity: 0.1; animation-delay: -4s;"></div>
+    <div class="bg-grid-pattern"></div>
+    <div class="bg-noise"></div>
+  </div>
+
+  <!-- SVG Gradients -->
+  <svg width="0" height="0" style="position: absolute;">
+    <defs>
+      <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color: #10b981"/>
+        <stop offset="100%" style="stop-color: #06b6d4"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 backdrop-blur-2xl bg-[var(--bg-deep)]/70 border-b border-[var(--border)]">
+    <div class="max-w-7xl mx-auto px-6 py-5">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-5 animate-fade-up stagger-1">
+          <div class="relative">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--accent)] via-[var(--accent-light)] to-[var(--accent-secondary)] flex items-center justify-center animate-float shadow-lg shadow-[var(--accent)]/20">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <path d="M16 10a4 4 0 0 1-8 0"/>
+              </svg>
+            </div>
+            <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] rounded-full border-3 border-[var(--bg-deep)]"></div>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight bg-gradient-to-r from-[var(--fg)] to-[var(--fg-secondary)] bg-clip-text text-transparent">DevShop Excelcior</h1>
+            <p class="text-xs text-[var(--fg-muted)] tracking-wide">Professional Web Store Builder</p>
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-3 animate-fade-up stagger-2">
+          <button id="importBtn" class="btn-ghost hidden md:flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Import
+          </button>
+          <button id="exportBtn" class="btn-ghost hidden md:flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Export
+          </button>
+          <button id="generateBtn" class="btn-glow flex items-center gap-3">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Generate Store</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="relative z-10 max-w-7xl mx-auto px-6 py-10">
+    <div class="grid lg:grid-cols-5 gap-10">
+      
+      <!-- Settings Panel -->
+      <div class="lg:col-span-3 space-y-8">
+        
+        <!-- Progress Overview -->
+        <div class="glass-card p-6 animate-fade-up stagger-1">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold mb-1">Setup Progress</h3>
+              <p class="text-sm text-[var(--fg-muted)]">Complete all sections to generate your store</p>
+            </div>
+            <div class="progress-ring">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle class="bg-ring" cx="60" cy="60" r="52"/>
+                <circle class="fg-ring" cx="60" cy="60" r="52" stroke-dasharray="326.73" stroke-dashoffset="326.73" id="progressCircle"/>
+              </svg>
+              <div class="value">
+                <span class="text-3xl font-bold" id="progressPercent">0%</span>
+                <span class="text-xs text-[var(--fg-muted)]">Complete</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tab-pills animate-fade-up stagger-2">
+          <button class="tab-pill active" data-tab="store">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            Toko
+          </button>
+          <button class="tab-pill" data-tab="banners">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Banner
+            <span class="badge" id="bannerCount">0</span>
+          </button>
+          <button class="tab-pill" data-tab="products">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            Produk
+            <span class="badge" id="productCount">0</span>
+          </button>
+          <button class="tab-pill" data-tab="settings">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Settings
+          </button>
+        </div>
+
+        <!-- Store Tab -->
+        <div id="tab-store" class="tab-content space-y-6">
+          
+          <!-- Basic Info -->
+          <section class="glass-card p-6 animate-fade-up stagger-3">
+            <h3 class="section-title text-lg font-semibold">Informasi Toko</h3>
+            
+            <div class="space-y-5">
+              <div class="grid sm:grid-cols-2 gap-5">
+                <div>
+                  <label class="block text-sm text-[var(--fg-muted)] mb-2 font-medium">Nama Toko</label>
+                  <input type="text" id="storeName" class="input-premium" placeholder="Contoh: Fashion Store ID">
+                </div>
+                <div>
+                  <label class="block text-sm text-[var(--fg-muted)] mb-2 font-medium">Tagline</label>
+                  <input type="text" id="storeTagline" class="input-premium" placeholder="Fashion Trendy & Berkualitas">
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm text-[var(--fg-muted)] mb-3 font-medium">Logo Toko</label>
+                <div class="upload-zone" id="logoUpload">
+                  <input type="file" id="logoInput" accept="image/*" class="hidden">
+                  <div id="logoPreviewContainer" class="hidden relative z-10">
+                    <img id="logoPreview" class="w-28 h-28 mx-auto rounded-2xl object-cover border border-[var(--border)] shadow-xl">
+                    <p class="text-sm text-[var(--fg-muted)] mt-4">Klik untuk mengganti</p>
+                  </div>
+                  <div id="logoPlaceholder" class="relative z-10">
+                    <div class="w-20 h-20 mx-auto rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] flex items-center justify-center mb-4">
+                      <svg class="w-10 h-10 text-[var(--fg-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                      </svg>
+                    </div>
+                    <p class="text-sm text-[var(--fg-secondary)]">Klik atau drag logo kesini</p>
+                    <p class="text-xs text-[var(--fg-muted)] mt-2">PNG, JPG, WebP (Max 2MB)</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Contact -->
+          <section class="glass-card p-6 animate-fade-up stagger-4">
+            <h3 class="section-title text-lg font-semibold">Kontak & Sosial Media</h3>
+            
+            <div class="space-y-5">
+              <div class="grid sm:grid-cols-2 gap-5">
+                <div>
+                  <label class="block text-sm text-[var(--fg-muted)] mb-2 font-medium">No. WhatsApp</label>
+                  <input type="text" id="waNumber" class="input-premium" placeholder="62812345678">
+                </div>
+                <div>
+                  <label class="block text-sm text-[var(--fg-muted)] mb-2 font-medium">Email</label>
+                  <input type="email" id="storeEmail" class="input-premium" placeholder="store@email.com">
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm text-[var(--fg-muted)] mb-2 font-medium">Alamat Lengkap</label>
+                <textarea id="storeAddress" class="input-premium resize-none" rows="2" placeholder="Alamat toko Anda"></textarea>
+              </div>
+
+              <div class="grid sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-sm text-[var(--fg-muted)] mb-2 font-medium">Instagram</label>
+                  <input type="text" id="instagram" class="input-premium" placeholder="@username">
+                </div>
+                <div>
+                  <label class="block text-sm text-[var(--fg-muted)] mb-2 font-medium">Facebook</label>
+                  <input type="text" id="facebook" class="input-premium" placeholder="username">
+                </div>
+                <div>
+                  <label class="block text-sm text-[var(--fg-muted)] mb-2 font-medium">TikTok</label>
+                  <input type="text" id="tiktok" class="input-premium" placeholder="@username">
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Operating Hours -->
+          <section class="glass-card p-6 animate-fade-up stagger-5">
+            <div class="flex items-center justify-between mb-5">
+              <div>
+                <h3 class="section-title text-lg font-semibold mb-0">Jam Operasional</h3>
+                <p class="text-sm text-[var(--fg-muted)] mt-1">Tampilkan status buka/tutup toko</p>
+              </div>
+              <div class="toggle-track active" id="showHours" onclick="toggleFeature(this)"></div>
+            </div>
+            
+            <div id="hoursContainer" class="grid sm:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-sm text-[var(--fg-muted)] mb-2 font-medium">Jam Buka</label>
+                <input type="time" id="openTime" class="input-premium" value="08:00">
+              </div>
+              <div>
+                <label class="block text-sm text-[var(--fg-muted)] mb-2 font-medium">Jam Tutup</label>
+                <input type="time" id="closeTime" class="input-premium" value="21:00">
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Banners Tab -->
+        <div id="tab-banners" class="tab-content space-y-6 hidden">
+          <section class="glass-card p-6 animate-fade-up">
+            <h3 class="section-title text-lg font-semibold">Banner Promosi</h3>
+            <p class="text-sm text-[var(--fg-muted)] mb-6">Tambahkan banner untuk promosi di halaman utama toko</p>
+            
+            <div class="upload-zone mb-6" id="bannerUpload">
+              <input type="file" id="bannerInput" accept="image/*" multiple class="hidden">
+              <div class="relative z-10">
+                <svg class="w-14 h-14 mx-auto text-[var(--fg-muted)] mb-4 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="12" y1="8" x2="12" y2="16"/>
+                  <line x1="8" y1="12" x2="16" y2="12"/>
+                </svg>
+                <p class="text-sm text-[var(--fg-secondary)]">Klik atau drag gambar kesini</p>
+                <p class="text-xs text-[var(--fg-muted)] mt-2">Bisa pilih banyak gambar sekaligus</p>
+              </div>
+            </div>
+            
+            <div id="bannerList" class="grid sm:grid-cols-2 gap-4"></div>
+            
+            <div id="bannerEmpty" class="text-center py-16">
+              <svg class="w-20 h-20 mx-auto mb-4 text-[var(--fg-muted)] opacity-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <p class="text-sm text-[var(--fg-muted)]">Belum ada banner</p>
+            </div>
+          </section>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="tab-products" class="tab-content space-y-6 hidden">
+          <section class="glass-card p-6 animate-fade-up">
+            <div class="flex items-start justify-between mb-6">
+              <div>
+                <h3 class="section-title text-lg font-semibold mb-1">Daftar Produk</h3>
+                <p class="text-sm text-[var(--fg-muted)]">Tambahkan semua produk yang ingin dijual</p>
+              </div>
+              <button id="addProductBtn" class="btn-glow flex items-center gap-2 py-3 px-5">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Tambah Produk
+              </button>
+            </div>
+            
+            <div id="productList" class="space-y-4"></div>
+            
+            <div id="productEmpty" class="text-center py-20">
+              <svg class="w-24 h-24 mx-auto mb-5 text-[var(--fg-muted)] opacity-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <path d="M16 10a4 4 0 0 1-8 0"/>
+              </svg>
+              <p class="text-sm text-[var(--fg-muted)]">Belum ada produk</p>
+              <p class="text-xs text-[var(--fg-muted)] mt-1 opacity-60">Klik tombol "Tambah Produk" untuk memulai</p>
+            </div>
+          </section>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="tab-settings" class="tab-content space-y-6 hidden">
+          
+          <!-- Theme -->
+          <section class="glass-card p-6 animate-fade-up">
+            <h3 class="section-title text-lg font-semibold">Tema Warna</h3>
+            <p class="text-sm text-[var(--fg-muted)] mb-6">Pilih tema warna untuk toko Anda</p>
+            
+            <div class="flex flex-wrap gap-4" id="themePicker">
+              <div class="theme-swatch active" data-theme="emerald" style="background: linear-gradient(135deg, #10b981, #059669);" onclick="selectTheme(this)"></div>
+              <div class="theme-swatch" data-theme="violet" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);" onclick="selectTheme(this)"></div>
+              <div class="theme-swatch" data-theme="rose" style="background: linear-gradient(135deg, #f43f5e, #e11d48);" onclick="selectTheme(this)"></div>
+              <div class="theme-swatch" data-theme="amber" style="background: linear-gradient(135deg, #f59e0b, #d97706);" onclick="selectTheme(this)"></div>
+              <div class="theme-swatch" data-theme="cyan" style="background: linear-gradient(135deg, #06b6d4, #0891b2);" onclick="selectTheme(this)"></div>
+              <div class="theme-swatch" data-theme="blue" style="background: linear-gradient(135deg, #3b82f6, #2563eb);" onclick="selectTheme(this)"></div>
+            </div>
+          </section>
+
+          <!-- Features -->
+          <section class="glass-card p-6 animate-fade-up">
+            <h3 class="section-title text-lg font-semibold">Fitur Tambahan</h3>
+            
+            <div>
+              <div class="feature-row">
+                <div>
+                  <p class="text-sm font-medium">Rating Produk</p>
+                  <p class="text-xs text-[var(--fg-muted)]">Tampilkan rating bintang</p>
+                </div>
+                <div class="toggle-track active" id="showRating" onclick="toggleFeature(this)"></div>
+              </div>
+              
+              <div class="feature-row">
+                <div>
+                  <p class="text-sm font-medium">Stok Produk</p>
+                  <p class="text-xs text-[var(--fg-muted)]">Info ketersediaan stok</p>
+                </div>
+                <div class="toggle-track active" id="showStock" onclick="toggleFeature(this)"></div>
+              </div>
+              
+              <div class="feature-row">
+                <div>
+                  <p class="text-sm font-medium">Kategori Produk</p>
+                  <p class="text-xs text-[var(--fg-muted)]">Filter berdasarkan kategori</p>
+                </div>
+                <div class="toggle-track active" id="showCategories" onclick="toggleFeature(this)"></div>
+              </div>
+              
+              <div class="feature-row">
+                <div>
+                  <p class="text-sm font-medium">Search Bar</p>
+                  <p class="text-xs text-[var(--fg-muted)]">Fitur pencarian produk</p>
+                </div>
+                <div class="toggle-track active" id="showSearch" onclick="toggleFeature(this)"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- WhatsApp Template -->
+          <section class="glass-card p-6 animate-fade-up">
+            <h3 class="section-title text-lg font-semibold">Template Pesan WhatsApp</h3>
+            
+            <div>
+              <label class="block text-sm text-[var(--fg-muted)] mb-2 font-medium">Template Pesan</label>
+              <textarea id="waTemplate" class="input-premium resize-none" rows="3" placeholder="Halo, saya ingin memesan *{produk}* dengan harga Rp {harga}">Halo, saya tertarik dengan produk *{produk}* seharga Rp {harga}. Apakah masih tersedia?</textarea>
+              <p class="text-xs text-[var(--fg-muted)] mt-3">Gunakan <code class="px-1.5 py-0.5 bg-black/30 rounded text-[var(--accent)]">{produk}</code> dan <code class="px-1.5 py-0.5 bg-black/30 rounded text-[var(--accent)]">{harga}</code> sebagai placeholder</p>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- Preview Panel -->
+      <div class="lg:col-span-2 lg:sticky lg:top-32 h-fit">
+        <div class="text-center mb-8 animate-fade-up stagger-3">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--accent-glow)] border border-[var(--accent)]/20 text-[var(--accent)] text-sm font-medium mb-4">
+            <span class="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse"></span>
+            Live Preview
+          </div>
+          <h3 class="text-2xl font-bold mb-2">Preview Toko</h3>
+          <p class="text-sm text-[var(--fg-muted)]">Tampilan real-time toko Anda</p>
+        </div>
+        
+        <div class="device-container animate-scale-in stagger-4">
+          <div class="device-glow"></div>
+          <div class="device-frame mx-auto" style="max-width: 380px;">
+            <div class="device-screen" id="phonePreview">
+              <div class="flex items-center justify-center h-full text-gray-400">
+                <div class="text-center p-8">
+                  <svg class="w-20 h-20 mx-auto mb-4 opacity-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                  </svg>
+                  <p class="text-sm">Isi form untuk melihat preview</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast -->
+  <div class="toast-wrapper" id="toastContainer"></div>
+
+  <!-- Hidden inputs -->
+  <input type="file" id="importInput" accept=".json" class="hidden">
+
+  <script>
+    // ========== STATE ==========
+    const state = {
+      storeName: '',
+      storeTagline: '',
+      logo: null,
+      waNumber: '',
+      storeEmail: '',
+      storeAddress: '',
+      instagram: '',
+      facebook: '',
+      tiktok: '',
+      openTime: '08:00',
+      closeTime: '21:00',
+      banners: [],
+      products: [],
+      theme: 'emerald',
+      settings: {
+        showHours: true,
+        showRating: true,
+        showStock: true,
+        showCategories: true,
+        showSearch: true
+      },
+      waTemplate: 'Halo, saya tertarik dengan produk *{produk}* seharga Rp {harga}. Apakah masih tersedia?'
+    };
+
+    // Theme colors
+    const themes = {
+      emerald: { primary: '#10b981', secondary: '#059669', light: '#d1fae5' },
+      violet: { primary: '#8b5cf6', secondary: '#6d28d9', light: '#ede9fe' },
+      rose: { primary: '#f43f5e', secondary: '#e11d48', light: '#ffe4e6' },
+      amber: { primary: '#f59e0b', secondary: '#d97706', light: '#fef3c7' },
+      cyan: { primary: '#06b6d4', secondary: '#0891b2', light: '#cffafe' },
+      blue: { primary: '#3b82f6', secondary: '#2563eb', light: '#dbeafe' }
+    };
+
+    // Elements
+    let el = {};
+
+    function initElements() {
+      el = {
+        storeName: document.getElementById('storeName'),
+        storeTagline: document.getElementById('storeTagline'),
+        waNumber: document.getElementById('waNumber'),
+        storeEmail: document.getElementById('storeEmail'),
+        storeAddress: document.getElementById('storeAddress'),
+        instagram: document.getElementById('instagram'),
+        facebook: document.getElementById('facebook'),
+        tiktok: document.getElementById('tiktok'),
+        openTime: document.getElementById('openTime'),
+        closeTime: document.getElementById('closeTime'),
+        logoInput: document.getElementById('logoInput'),
+        logoUpload: document.getElementById('logoUpload'),
+        logoPreview: document.getElementById('logoPreview'),
+        logoPreviewContainer: document.getElementById('logoPreviewContainer'),
+        logoPlaceholder: document.getElementById('logoPlaceholder'),
+        bannerInput: document.getElementById('bannerInput'),
+        bannerUpload: document.getElementById('bannerUpload'),
+        bannerList: document.getElementById('bannerList'),
+        bannerEmpty: document.getElementById('bannerEmpty'),
+        bannerCount: document.getElementById('bannerCount'),
+        productList: document.getElementById('productList'),
+        productEmpty: document.getElementById('productEmpty'),
+        productCount: document.getElementById('productCount'),
+        addProductBtn: document.getElementById('addProductBtn'),
+        generateBtn: document.getElementById('generateBtn'),
+        exportBtn: document.getElementById('exportBtn'),
+        importBtn: document.getElementById('importBtn'),
+        importInput: document.getElementById('importInput'),
+        phonePreview: document.getElementById('phonePreview'),
+        progressCircle: document.getElementById('progressCircle'),
+        progressPercent: document.getElementById('progressPercent'),
+        toastContainer: document.getElementById('toastContainer'),
+        waTemplate: document.getElementById('waTemplate'),
+        hoursContainer: document.getElementById('hoursContainer')
+      };
+    }
+
+    // Toast
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `toast-item ${type}`;
+      
+      const icons = {
+        success: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+        error: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+        warning: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+      };
+      
+      toast.innerHTML = `${icons[type]}<span class="text-sm">${message}</span>`;
+      el.toastContainer.appendChild(toast);
+      
+      requestAnimationFrame(() => toast.classList.add('show'));
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+      }, 3500);
+    }
+
+    // Progress
+    function updateProgress() {
+      let filled = 0;
+      const total = 6;
+      
+      if (state.storeName) filled++;
+      if (state.logo) filled++;
+      if (state.waNumber) filled++;
+      if (state.banners.length > 0) filled++;
+      if (state.products.length > 0) filled++;
+      if (state.products.some(p => p.name && p.price)) filled++;
+      
+      const percentage = Math.round((filled / total) * 100);
+      const circumference = 2 * Math.PI * 52;
+      const offset = circumference - (filled / total) * circumference;
+      
+      el.progressCircle.style.strokeDashoffset = offset;
+      el.progressPercent.textContent = percentage + '%';
+    }
+
+    // Tabs
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-pill').forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+      
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+    }
+
+    // File to Base64
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    // Update Preview
+    function updatePreview() {
+      const preview = el.phonePreview;
+      const theme = themes[state.theme];
+      
+      let html = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; min-height: 100%;">
+          
+          <!-- Status Bar -->
+          <div style="background: ${theme.primary}; padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-size: 13px; font-weight: 600;">
+            <span id="preview-time">12:30</span>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.01 21.49L23.64 7c-.45-.34-4.93-4-11.64-4C5.28 3 .81 6.66.36 7l11.63 14.49.01.01.01-.01z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+            </div>
+          </div>
+          
+          <!-- Header -->
+          <div style="background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%); padding: 24px; position: relative; overflow: hidden;">
+            <div style="position: absolute; inset: 0; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 60 60\"><circle cx=\"30\" cy=\"30\" r=\"25\" fill=\"none\" stroke=\"white\" stroke-opacity=\"0.08\" stroke-width=\"0.5\"/></svg>'); background-size: 60px; opacity: 0.5;"></div>
+            <div style="position: relative; display: flex; align-items: center; gap: 16px;">
+              ${state.logo ? 
+                `<img src="${state.logo}" style="width: 64px; height: 64px; border-radius: 18px; object-fit: cover; border: 3px solid rgba(255,255,255,0.25); box-shadow: 0 8px 24px rgba(0,0,0,0.2);">` :
+                `<div style="width: 64px; height: 64px; border-radius: 18px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,0.2);">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/></svg>
+                </div>`
+              }
+              <div style="flex: 1;">
+                <h1 style="color: #fff; font-size: 20px; font-weight: 700; margin: 0; letter-spacing: -0.02em;">${state.storeName || 'Nama Toko Anda'}</h1>
+                <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin: 6px 0 0 0;">${state.storeTagline || 'Tagline toko Anda'}</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Search -->
+          ${state.settings.showSearch ? `
+          <div style="padding: 16px; background: #fff;">
+            <div style="background: #f1f5f9; border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; gap: 12px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span style="color: #94a3b8; font-size: 14px;">Cari produk...</span>
+            </div>
+          </div>` : ''}
+          
+          <!-- Banner -->
+          ${state.banners.length > 0 ? `
+          <div style="padding: 16px; background: #fff;">
+            <div style="position: relative; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+              <img src="${state.banners[0]}" style="width: 100%; aspect-ratio: 2.2/1; object-fit: cover;">
+              ${state.banners.length > 1 ? `
+              <div style="position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px;">
+                ${state.banners.slice(0, 5).map((_, i) => `<div style="width: ${i === 0 ? '24px' : '8px'}; height: 8px; border-radius: 4px; background: ${i === 0 ? '#fff' : 'rgba(255,255,255,0.5)'};"></div>`).join('')}
+              </div>` : ''}
+            </div>
+          </div>` : ''}
+          
+          <!-- Categories -->
+          ${state.settings.showCategories ? `
+          <div style="padding: 8px 16px 16px; background: #fff; display: flex; gap: 10px; overflow-x: auto;">
+            <div style="background: ${theme.light}; color: ${theme.primary}; padding: 10px 18px; border-radius: 24px; font-size: 13px; white-space: nowrap; font-weight: 600; border: 1px solid ${theme.primary}20;">Semua</div>
+            <div style="background: #f1f5f9; color: #64748b; padding: 10px 18px; border-radius: 24px; font-size: 13px; white-space: nowrap;">Terlaris</div>
+            <div style="background: #f1f5f9; color: #64748b; padding: 10px 18px; border-radius: 24px; font-size: 13px; white-space: nowrap;">Promo</div>
+          </div>` : ''}
+          
+          <!-- Hours -->
+          ${state.settings.showHours ? `
+          <div style="margin: 8px 16px; background: linear-gradient(135deg, ${theme.light} 0%, #fff 100%); border-radius: 16px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; border: 1px solid ${theme.primary}15;">
+            <div style="width: 40px; height: 40px; background: ${theme.primary}; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+            </div>
+            <div>
+              <p style="font-size: 13px; color: ${theme.secondary}; font-weight: 600; margin: 0;">Buka Sekarang</p>
+              <p style="font-size: 12px; color: ${theme.primary}; margin: 4px 0 0 0;">${state.openTime} - ${state.closeTime}</p>
+            </div>
+          </div>` : ''}
+          
+          <!-- Products -->
+          <div style="padding: 20px 16px; background: #fff; margin-top: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h3 style="font-size: 18px; font-weight: 700; color: #1e293b; margin: 0;">Produk Kami</h3>
+              <span style="font-size: 13px; color: ${theme.primary}; font-weight: 500;">Lihat Semua</span>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;">
+              ${state.products.length === 0 ? `
+                <div style="grid-column: span 2; text-align: center; padding: 40px;">
+                  <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#e2e8f0" stroke-width="1.5" style="margin: 0 auto 16px;">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                  </svg>
+                  <p style="font-size: 14px; color: #94a3b8; margin: 0;">Belum ada produk</p>
+                </div>
+              ` : state.products.slice(0, 4).map(product => `
+                <div style="background: #fff; border-radius: 18px; overflow: hidden; border: 1px solid #f1f5f9; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                  <div style="aspect-ratio: 1; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); overflow: hidden; position: relative;">
+                    ${product.image ? 
+                      `<img src="${product.image}" style="width: 100%; height: 100%; object-fit: cover;">` :
+                      `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#e2e8f0" stroke-width="1.5">
+                          <rect x="3" y="3" width="18" height="18" rx="2"/>
+                          <circle cx="8.5" cy="8.5" r="1.5"/>
+                          <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                      </div>`
+                    }
+                    ${state.settings.showStock && product.stock !== undefined ? `
+                    <div style="position: absolute; top: 10px; left: 10px; background: ${product.stock > 0 ? '#10b981' : '#f43f5e'}; color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600;">
+                      ${product.stock > 0 ? `Stok: ${product.stock}` : 'Habis'}
+                    </div>` : ''}
+                  </div>
+                  <div style="padding: 12px;">
+                    <h4 style="font-size: 14px; font-weight: 500; color: #1e293b; margin: 0 0 6px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${product.name || 'Nama Produk'}</h4>
+                    ${state.settings.showRating ? `
+                    <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                      <span style="font-size: 12px; color: #64748b; font-weight: 500;">4.8</span>
+                    </div>` : ''}
+                    <p style="font-size: 16px; font-weight: 700; color: ${theme.primary}; margin: 0 0 10px 0;">Rp ${(product.price || 0).toLocaleString('id-ID')}</p>
+                    <button style="width: 100%; background: ${theme.primary}; color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                      Pesan via WA
+                    </button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          
+          <!-- Store Info -->
+          <div style="padding: 20px 16px; background: #fff; margin-top: 8px;">
+            <h3 style="font-size: 18px; font-weight: 700; color: #1e293b; margin: 0 0 16px 0;">Info Toko</h3>
+            
+            ${state.storeAddress ? `
+            <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+              <div style="width: 40px; height: 40px; background: ${theme.light}; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="${theme.primary}"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              </div>
+              <p style="font-size: 14px; color: #64748b; margin: 0; line-height: 1.6;">${state.storeAddress}</p>
+            </div>` : ''}
+            
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              ${state.instagram ? `<div style="background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: #fff; padding: 8px 16px; border-radius: 24px; font-size: 12px; font-weight: 600;">Instagram</div>` : ''}
+              ${state.facebook ? `<div style="background: #1877f2; color: #fff; padding: 8px 16px; border-radius: 24px; font-size: 12px; font-weight: 600;">Facebook</div>` : ''}
+              ${state.tiktok ? `<div style="background: #000; color: #fff; padding: 8px 16px; border-radius: 24px; font-size: 12px; font-weight: 600;">TikTok</div>` : ''}
+            </div>
+          </div>
+          
+          <div style="height: 80px;"></div>
+        </div>
+      `;
+      
+      preview.innerHTML = html;
+      updateProgress();
+    }
+
+    // Render Product List
+    function renderProductList() {
+      const container = el.productList;
+      
+      if (state.products.length === 0) {
+        container.innerHTML = '';
+        el.productEmpty.classList.remove('hidden');
+        el.productCount.textContent = '0';
+        return;
+      }
+      
+      el.productEmpty.classList.add('hidden');
+      el.productCount.textContent = state.products.length;
+      
+      container.innerHTML = state.products.map((product, index) => `
+        <div class="product-card" style="animation-delay: ${index * 0.05}s;">
+          <div class="flex gap-5">
+            <div class="flex-shrink-0">
+              <div class="upload-zone p-3" style="width: 90px; height: 90px; border-radius: 18px;" onclick="document.getElementById('productImg${index}').click()">
+                <input type="file" id="productImg${index}" accept="image/*" class="hidden" onchange="handleProductImage(${index}, this)">
+                ${product.image ? 
+                  `<img src="${product.image}" class="w-full h-full rounded-xl object-cover">` :
+                  `<div class="w-full h-full flex items-center justify-center">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--fg-muted)" stroke-width="1.5">
+                      <rect x="3" y="3" width="18" height="18" rx="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                  </div>`
+                }
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex justify-between items-start gap-3 mb-4">
+                <input type="text" value="${product.name || ''}" placeholder="Nama produk" 
+                  class="input-premium text-sm" 
+                  onchange="updateProduct(${index}, 'name', this.value)">
+                <button class="btn-danger py-2 px-3" onclick="removeProduct(${index})">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                </button>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                  <label class="block text-xs text-[var(--fg-muted)] mb-1.5 font-medium">Harga (Rp)</label>
+                  <input type="number" value="${product.price || ''}" placeholder="0" 
+                    class="input-premium text-sm" 
+                    onchange="updateProduct(${index}, 'price', Number(this.value))">
+                </div>
+                ${state.settings.showStock ? `
+                <div>
+                  <label class="block text-xs text-[var(--fg-muted)] mb-1.5 font-medium">Stok</label>
+                  <input type="number" value="${product.stock !== undefined ? product.stock : ''}" placeholder="0" 
+                    class="input-premium text-sm" 
+                    onchange="updateProduct(${index}, 'stock', Number(this.value))">
+                </div>` : ''}
+              </div>
+              
+              <div>
+                <label class="block text-xs text-[var(--fg-muted)] mb-1.5 font-medium">Kategori</label>
+                <select class="input-premium text-sm" onchange="updateProduct(${index}, 'category', this.value)">
+                  <option value="">Pilih kategori</option>
+                  <option value="fashion" ${product.category === 'fashion' ? 'selected' : ''}>Fashion</option>
+                  <option value="elektronik" ${product.category === 'elektronik' ? 'selected' : ''}>Elektronik</option>
+                  <option value="makanan" ${product.category === 'makanan' ? 'selected' : ''}>Makanan & Minuman</option>
+                  <option value="kecantikan" ${product.category === 'kecantikan' ? 'selected' : ''}>Kecantikan</option>
+                  <option value="rumah" ${product.category === 'rumah' ? 'selected' : ''}>Rumah Tangga</option>
+                  <option value="lainnya" ${product.category === 'lainnya' ? 'selected' : ''}>Lainnya</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Render Banner List
+    function renderBannerList() {
+      const container = el.bannerList;
+      
+      if (state.banners.length === 0) {
+        container.innerHTML = '';
+        el.bannerEmpty.classList.remove('hidden');
+        el.bannerCount.textContent = '0';
+        return;
+      }
+      
+      el.bannerEmpty.classList.add('hidden');
+      el.bannerCount.textContent = state.banners.length;
+      
+      container.innerHTML = state.banners.map((banner, index) => `
+        <div class="banner-card" style="animation-delay: ${index * 0.1}s;">
+          <img src="${banner}" alt="Banner ${index + 1}">
+          <div class="actions">
+            <button class="btn-danger" onclick="removeBanner(${index})">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Product functions
+    function updateProduct(index, field, value) {
+      state.products[index][field] = value;
+      updatePreview();
+    }
+
+    function removeProduct(index) {
+      state.products.splice(index, 1);
+      renderProductList();
+      updatePreview();
+      showToast('Produk dihapus', 'warning');
+    }
+
+    async function handleProductImage(index, input) {
+      if (input.files && input.files[0]) {
+        state.products[index].image = await fileToBase64(input.files[0]);
+        renderProductList();
+        updatePreview();
+        showToast('Gambar produk ditambahkan');
+      }
+    }
+
+    // Banner functions
+    function removeBanner(index) {
+      state.banners.splice(index, 1);
+      renderBannerList();
+      updatePreview();
+      showToast('Banner dihapus', 'warning');
+    }
+
+    // Theme
+    function selectTheme(el) {
+      document.querySelectorAll('.theme-swatch').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      state.theme = el.dataset.theme;
+      updatePreview();
+      showToast('Tema diperbarui');
+    }
+
+    // Toggle
+    function toggleFeature(el) {
+      const isActive = el.dataset.active === 'true';
+      el.dataset.active = (!isActive).toString();
+      el.classList.toggle('active', !isActive);
+      
+      const featureName = el.id;
+      state.settings[featureName] = !isActive;
+      
+      if (featureName === 'showHours' && el.hoursContainer) {
+        el.hoursContainer.style.display = !isActive ? 'grid' : 'none';
+      }
+      
+      updatePreview();
+      renderProductList();
+    }
+
+    // Export/Import
+    function exportSettings() {
+      const data = JSON.stringify(state, null, 2);
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${state.storeName || 'store'}-config.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Konfigurasi diekspor');
+    }
+
+    function importSettings(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          Object.assign(state, data);
+          
+          el.storeName.value = state.storeName || '';
+          el.storeTagline.value = state.storeTagline || '';
+          el.waNumber.value = state.waNumber || '';
+          el.storeEmail.value = state.storeEmail || '';
+          el.storeAddress.value = state.storeAddress || '';
+          el.instagram.value = state.instagram || '';
+          el.facebook.value = state.facebook || '';
+          el.tiktok.value = state.tiktok || '';
+          el.openTime.value = state.openTime || '08:00';
+          el.closeTime.value = state.closeTime || '21:00';
+          el.waTemplate.value = state.waTemplate || '';
+          
+          if (state.logo) {
+            el.logoPreview.src = state.logo;
+            el.logoPreviewContainer.classList.remove('hidden');
+            el.logoPlaceholder.classList.add('hidden');
+          }
+          
+          Object.keys(state.settings).forEach(key => {
+            const elem = document.getElementById(key);
+            if (elem) {
+              elem.dataset.active = state.settings[key].toString();
+              elem.classList.toggle('active', state.settings[key]);
+            }
+          });
+          
+          document.querySelectorAll('.theme-swatch').forEach(t => {
+            t.classList.toggle('active', t.dataset.theme === state.theme);
+          });
+          
+          renderBannerList();
+          renderProductList();
+          updatePreview();
+          
+          showToast('Konfigurasi diimpor');
+        } catch (err) {
+          showToast('Gagal mengimpor file', 'error');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Generate Store
+    function generateStore() {
+      const errors = [];
+      if (!state.storeName) errors.push('Nama toko');
+      if (!state.waNumber) errors.push('Nomor WhatsApp');
+      if (state.products.length === 0) errors.push('Minimal 1 produk');
+      
+      if (errors.length > 0) {
+        showToast(`Harap lengkapi: ${errors.join(', ')}`, 'error');
+        return;
+      }
+      
+      const storeHTML = generateStoreHTML();
+      const blob = new Blob([storeHTML], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${state.storeName.replace(/\s+/g, '-').toLowerCase()}-store.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showToast('Web store berhasil dibuat!');
+    }
+
+    function generateStoreHTML() {
+      const theme = themes[state.theme];
+      const bannersJS = JSON.stringify(state.banners);
+      const productsJS = JSON.stringify(state.products);
+      
+      return `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="${theme.primary}">
+  <meta name="description" content="${state.storeTagline || state.storeName}">
+  <title>${state.storeName}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; min-height: 100vh; color: #1e293b; }
+    
+    .status-bar { background: ${theme.primary}; padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-size: 13px; font-weight: 600; position: sticky; top: 0; z-index: 100; }
+    
+    .app-header { background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%); padding: 24px; position: relative; overflow: hidden; }
+    .app-header::before { content: ''; position: absolute; inset: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="30" r="25" fill="none" stroke="white" stroke-opacity="0.08" stroke-width="0.5"/></svg>'); background-size: 60px; opacity: 0.5; }
+    .app-header .content { position: relative; display: flex; align-items: center; gap: 16px; }
+    .app-header .logo { width: 64px; height: 64px; border-radius: 18px; object-fit: cover; border: 3px solid rgba(255,255,255,0.25); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+    .app-header .logo-placeholder { width: 64px; height: 64px; border-radius: 18px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,0.2); }
+    .app-header h1 { color: #fff; font-size: 20px; font-weight: 700; margin: 0; letter-spacing: -0.02em; }
+    .app-header p { color: rgba(255,255,255,0.8); font-size: 13px; margin: 6px 0 0 0; }
+    
+    .search-bar { padding: 16px; background: #fff; }
+    .search-input { background: #f1f5f9; border: none; border-radius: 14px; padding: 14px 18px 14px 48px; width: 100%; font-size: 14px; outline: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 16px center; }
+    .search-input::placeholder { color: #94a3b8; }
+    
+    .banner-section { padding: 16px; background: #fff; }
+    .banner-container { position: relative; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+    .banner-slide { width: 100%; aspect-ratio: 2.2/1; object-fit: cover; display: none; }
+    .banner-slide.active { display: block; animation: fadeIn 0.5s ease; }
+    .banner-dots { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
+    .banner-dot { width: 8px; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.3s ease; border: none; padding: 0; }
+    .banner-dot.active { width: 24px; background: #fff; }
+    
+    .categories { padding: 8px 16px 16px; background: #fff; display: flex; gap: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .categories::-webkit-scrollbar { display: none; }
+    .cat-btn { background: #f1f5f9; color: #64748b; padding: 10px 18px; border-radius: 24px; font-size: 13px; white-space: nowrap; border: none; cursor: pointer; transition: all 0.2s ease; }
+    .cat-btn.active { background: ${theme.light}; color: ${theme.primary}; font-weight: 600; border: 1px solid ${theme.primary}20; }
+    
+    .hours-card { margin: 8px 16px; background: linear-gradient(135deg, ${theme.light} 0%, #fff 100%); border-radius: 16px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; border: 1px solid ${theme.primary}15; }
+    .hours-card .icon { width: 40px; height: 40px; background: ${theme.primary}; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    .hours-card .label { font-size: 13px; color: ${theme.secondary}; font-weight: 600; }
+    .hours-card .time { font-size: 12px; color: ${theme.primary}; margin-top: 4px; }
+    
+    .section { padding: 20px 16px; background: #fff; margin-top: 8px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .section-title { font-size: 18px; font-weight: 700; color: #1e293b; }
+    .section-link { font-size: 13px; color: ${theme.primary}; font-weight: 500; cursor: pointer; }
+    
+    .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .product-card { background: #fff; border-radius: 18px; overflow: hidden; border: 1px solid #f1f5f9; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: transform 0.2s ease; }
+    .product-card:active { transform: scale(0.98); }
+    .product-img-wrap { aspect-ratio: 1; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); overflow: hidden; position: relative; }
+    .product-img { width: 100%; height: 100%; object-fit: cover; }
+    .stock-badge { position: absolute; top: 10px; left: 10px; font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; color: #fff; }
+    .stock-badge.available { background: #10b981; }
+    .stock-badge.empty { background: #f43f5e; }
+    .product-info { padding: 12px; }
+    .product-name { font-size: 14px; font-weight: 500; color: #1e293b; margin-bottom: 6px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .product-rating { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
+    .product-rating svg { width: 14px; height: 14px; }
+    .product-rating span { font-size: 12px; color: #64748b; font-weight: 500; }
+    .product-price { font-size: 16px; font-weight: 700; color: ${theme.primary}; margin-bottom: 10px; }
+    .order-btn { width: 100%; background: ${theme.primary}; color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s ease; }
+    .order-btn:active { background: ${theme.secondary}; }
+    
+    .store-info { padding: 20px 16px; background: #fff; margin-top: 8px; }
+    .store-info h3 { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 16px; }
+    .info-row { display: flex; gap: 12px; margin-bottom: 16px; }
+    .info-row .icon { width: 40px; height: 40px; background: ${theme.light}; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .info-row p { font-size: 14px; color: #64748b; line-height: 1.6; margin: 0; }
+    .social-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+    .social-chip { padding: 8px 16px; border-radius: 24px; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; border: none; }
+    .social-chip.instagram { background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+    .social-chip.facebook { background: #1877f2; }
+    .social-chip.tiktok { background: #000; }
+    
+    .bottom-spacer { height: 80px; }
+    
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="status-bar">
+    <span id="clock">12:30</span>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.01 21.49L23.64 7c-.45-.34-4.93-4-11.64-4C5.28 3 .81 6.66.36 7l11.63 14.49.01.01.01-.01z"/></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="content">
+      ${state.logo ? `<img src="${state.logo}" class="logo" alt="Logo">` : `<div class="logo-placeholder"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/></svg></div>`}
+      <div>
+        <h1>${state.storeName}</h1>
+        <p>${state.storeTagline || 'Toko Online Terpercaya'}</p>
+      </div>
+    </div>
+  </header>
+
+  ${state.settings.showSearch ? `<div class="search-bar"><input type="text" class="search-input" placeholder="Cari produk..." id="searchInput"></div>` : ''}
+
+  ${state.banners.length > 0 ? `
+  <div class="banner-section">
+    <div class="banner-container" id="bannerContainer">
+      ${state.banners.map((b, i) => `<img src="${b}" class="banner-slide ${i === 0 ? 'active' : ''}" alt="Banner">`).join('')}
+      <div class="banner-dots" id="bannerDots">
+        ${state.banners.map((_, i) => `<button class="banner-dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></button>`).join('')}
+      </div>
+    </div>
+  </div>` : ''}
+
+  ${state.settings.showCategories ? `
+  <div class="categories" id="categories">
+    <button class="cat-btn active" onclick="filterProducts('all', this)">Semua</button>
+    <button class="cat-btn" onclick="filterProducts('fashion', this)">Fashion</button>
+    <button class="cat-btn" onclick="filterProducts('elektronik', this)">Elektronik</button>
+    <button class="cat-btn" onclick="filterProducts('makanan', this)">Makanan</button>
+    <button class="cat-btn" onclick="filterProducts('kecantikan', this)">Kecantikan</button>
+  </div>` : ''}
+
+  ${state.settings.showHours ? `
+  <div class="hours-card">
+    <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg></div>
+    <div>
+      <p class="label" id="hoursLabel">Buka Sekarang</p>
+      <p class="time">${state.openTime} - ${state.closeTime}</p>
+    </div>
+  </div>` : ''}
+
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">Produk Kami</h2>
+      <span class="section-link">Lihat Semua</span>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </section>
+
+  <section class="store-info">
+    <h3>Info Toko</h3>
+    ${state.storeAddress ? `
+    <div class="info-row">
+      <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="${theme.primary}"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
+      <p>${state.storeAddress}</p>
+    </div>` : ''}
+    <div class="social-chips">
+      ${state.instagram ? `<button class="social-chip instagram" onclick="openSocial('instagram')">Instagram</button>` : ''}
+      ${state.facebook ? `<button class="social-chip facebook" onclick="openSocial('facebook')">Facebook</button>` : ''}
+      ${state.tiktok ? `<button class="social-chip tiktok" onclick="openSocial('tiktok')">TikTok</button>` : ''}
+    </div>
+  </section>
+
+  <div class="bottom-spacer"></div>
+
+  <script>
+    const CONFIG = {
+      waNumber: '${state.waNumber}',
+      waTemplate: '${(state.waTemplate || '').replace(/'/g, "\\'")}',
+      theme: { primary: '${theme.primary}', secondary: '${theme.secondary}', light: '${theme.light}' },
+      showRating: ${state.settings.showRating},
+      showStock: ${state.settings.showStock}
+    };
+    
+    const BANNERS = ${bannersJS};
+    const PRODUCTS = ${productsJS};
+    
+    let currentSlide = 0;
+    let allProducts = PRODUCTS;
+    
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      if (CONFIG.showHours) {
+        const label = document.getElementById('hoursLabel');
+        if (label) {
+          const hours = now.getHours();
+          const openH = parseInt('${state.openTime}'.split(':')[0]);
+          const closeH = parseInt('${state.closeTime}'.split(':')[0]);
+          label.textContent = (hours >= openH && hours < closeH) ? 'Buka Sekarang' : 'Toko Tutup';
+        }
+      }
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+    
+    function goToSlide(index) {
+      currentSlide = index;
+      document.querySelectorAll('.banner-slide').forEach((s, i) => s.classList.toggle('active', i === index));
+      document.querySelectorAll('.banner-dot').forEach((d, i) => d.classList.toggle('active', i === index));
+    }
+    
+    if (BANNERS.length > 1) {
+      setInterval(() => {
+        currentSlide = (currentSlide + 1) % BANNERS.length;
+        goToSlide(currentSlide);
+      }, 4000);
+    }
+    
+    function renderProducts(products) {
+      const grid = document.getElementById('productsGrid');
+      if (products.length === 0) {
+        grid.innerHTML = '<div style="grid-column: span 2; text-align: center; padding: 40px;"><p style="font-size: 14px; color: #94a3b8;">Tidak ada produk</p></div>';
+        return;
+      }
+      grid.innerHTML = products.map(p => {
+        const hasStock = p.stock !== undefined;
+        const inStock = p.stock > 0;
+        return \`
+        <div class="product-card">
+          <div class="product-img-wrap">
+            \${p.image ? \`<img src="\${p.image}" class="product-img" alt="\${p.name}">\` : ''}
+            \${CONFIG.showStock && hasStock ? \`<div class="stock-badge \${inStock ? 'available' : 'empty'}">\${inStock ? 'Stok: ' + p.stock : 'Habis'}</div>\` : ''}
+          </div>
+          <div class="product-info">
+            <h4 class="product-name">\${p.name || 'Produk'}</h4>
+            \${CONFIG.showRating ? \`<div class="product-rating"><svg viewBox="0 0 24 24" fill="#fbbf24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><span>4.8</span></div>\` : ''}
+            <p class="product-price">Rp \${(p.price || 0).toLocaleString('id-ID')}</p>
+            <button class="order-btn" onclick="orderProduct('\${p.name}', \${p.price})">\${inStock || !hasStock ? 'Pesan via WA' : 'Habis'}</button>
+          </div>
+        </div>\`;
+      }).join('');
+    }
+    
+    renderProducts(allProducts);
+    
+    function orderProduct(name, price) {
+      const message = CONFIG.waTemplate.replace('{produk}', name).replace('{harga}', price.toLocaleString('id-ID'));
+      window.open('https://wa.me/' + CONFIG.waNumber + '?text=' + encodeURIComponent(message), '_blank');
+    }
+    
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        renderProducts(allProducts.filter(p => p.name && p.name.toLowerCase().includes(query)));
+      });
+    }
+    
+    function filterProducts(category, btn) {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderProducts(category === 'all' ? allProducts : allProducts.filter(p => p.category === category));
+    }
+    
+    function openSocial(platform) {
+      const urls = {
+        instagram: 'https://instagram.com/${state.instagram.replace('@', '')}',
+        facebook: 'https://facebook.com/${state.facebook}',
+        tiktok: 'https://tiktok.com/${state.tiktok.replace('@', '')}'
+      };
+      window.open(urls[platform], '_blank');
+    }
+  <\/script>
+</body>
+</html>`;
+    }
+
+    // Event Listeners
+    function initEventListeners() {
+      // Tabs
+      document.querySelectorAll('.tab-pill').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+      });
+
+      // Store info
+      el.storeName.addEventListener('input', (e) => { state.storeName = e.target.value; updatePreview(); });
+      el.storeTagline.addEventListener('input', (e) => { state.storeTagline = e.target.value; updatePreview(); });
+      el.waNumber.addEventListener('input', (e) => { state.waNumber = e.target.value; updateProgress(); });
+      el.storeEmail.addEventListener('input', (e) => { state.storeEmail = e.target.value; });
+      el.storeAddress.addEventListener('input', (e) => { state.storeAddress = e.target.value; updatePreview(); });
+      el.instagram.addEventListener('input', (e) => { state.instagram = e.target.value; updatePreview(); });
+      el.facebook.addEventListener('input', (e) => { state.facebook = e.target.value; updatePreview(); });
+      el.tiktok.addEventListener('input', (e) => { state.tiktok = e.target.value; updatePreview(); });
+      el.openTime.addEventListener('input', (e) => { state.openTime = e.target.value; updatePreview(); });
+      el.closeTime.addEventListener('input', (e) => { state.closeTime = e.target.value; updatePreview(); });
+      el.waTemplate.addEventListener('input', (e) => { state.waTemplate = e.target.value; });
+
+      // Logo
+      el.logoUpload.addEventListener('click', () => el.logoInput.click());
+      el.logoUpload.addEventListener('dragover', (e) => { e.preventDefault(); el.logoUpload.classList.add('dragover'); });
+      el.logoUpload.addEventListener('dragleave', () => el.logoUpload.classList.remove('dragover'));
+      el.logoUpload.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        el.logoUpload.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          state.logo = await fileToBase64(e.dataTransfer.files[0]);
+          el.logoPreview.src = state.logo;
+          el.logoPreviewContainer.classList.remove('hidden');
+          el.logoPlaceholder.classList.add('hidden');
+          updatePreview();
+          showToast('Logo berhasil diupload');
+        }
+      });
+      el.logoInput.addEventListener('change', async (e) => {
+        if (e.target.files && e.target.files[0]) {
+          state.logo = await fileToBase64(e.target.files[0]);
+          el.logoPreview.src = state.logo;
+          el.logoPreviewContainer.classList.remove('hidden');
+          el.logoPlaceholder.classList.add('hidden');
+          updatePreview();
+          showToast('Logo berhasil diupload');
+        }
+      });
+
+      // Banner
+      el.bannerUpload.addEventListener('click', () => el.bannerInput.click());
+      el.bannerUpload.addEventListener('dragover', (e) => { e.preventDefault(); el.bannerUpload.classList.add('dragover'); });
+      el.bannerUpload.addEventListener('dragleave', () => el.bannerUpload.classList.remove('dragover'));
+      el.bannerUpload.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        el.bannerUpload.classList.remove('dragover');
+        for (const file of e.dataTransfer.files) {
+          if (file.type.startsWith('image/')) {
+            state.banners.push(await fileToBase64(file));
+          }
+        }
+        renderBannerList();
+        updatePreview();
+        showToast('Banner berhasil ditambahkan');
+      });
+      el.bannerInput.addEventListener('change', async (e) => {
+        for (const file of e.target.files) {
+          state.banners.push(await fileToBase64(file));
+        }
+        renderBannerList();
+        updatePreview();
+        showToast('Banner berhasil ditambahkan');
+        e.target.value = '';
+      });
+
+      // Add product
+      el.addProductBtn.addEventListener('click', () => {
+        state.products.push({ name: '', price: 0, image: null, category: '', stock: 10 });
+        renderProductList();
+        updatePreview();
+        showToast('Produk baru ditambahkan');
+      });
+
+      // Generate
+      el.generateBtn.addEventListener('click', generateStore);
+
+      // Export/Import
+      el.exportBtn.addEventListener('click', exportSettings);
+      el.importBtn.addEventListener('click', () => el.importInput.click());
+      el.importInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          importSettings(e.target.files[0]);
+        }
+        e.target.value = '';
+      });
+
+      // Keyboard shortcut
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+          e.preventDefault();
+          generateStore();
+        }
+      });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      initElements();
+      initEventListeners();
+      updatePreview();
+      
+      // Set initial toggle states
+      Object.keys(state.settings).forEach(key => {
+        const elem = document.getElementById(key);
+        if (elem && state.settings[key]) {
+          elem.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
